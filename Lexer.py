@@ -41,4 +41,5 @@ class Lexer:
             return Token('LEFTPAREN', self.stream.pop())
         elif self.stream.peek() == ')':
             return Token('RIGHTPAREN', self.stream.pop())
-        
+        else:
+            raise Exception('Lexing Error: not a valid token')
