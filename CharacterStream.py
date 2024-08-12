@@ -13,11 +13,18 @@ class CharacterStream:
 
         file.close()
 
-    def hasNext(self):
-        return len(self.text) > 0
+    def isEnd(self):
+        return not len(self.text) > 0
     
-    def next(self):
+    def pop(self):
         return self.text.pop(0)
     
     def peek(self):
         return self.text[0]
+    
+    def purgeSpaces(self):
+        while len(self.text) > 0:
+            if self.peek() == ' ':
+                self.pop()
+            else:
+                return
