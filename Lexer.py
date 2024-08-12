@@ -15,6 +15,12 @@ class Lexer:
             return Token('PERIOD', self.stream.pop())
         elif self.stream.peek() == '=':
             return Token('EQUALS', self.stream.pop())
+        elif self.stream.peek() == ':':
+            self.stream.pop()
+            if self.stream.isEnd() or self.stream.peek() != '=':
+                raise Exception('Lexing Error: invalid token')
+            self.stream.pop()
+            return Token('ASSIGN', ':=')
         elif self.stream.peek() == ',':
             return Token('COMMA', self.stream.pop())
         elif self.stream.peek() == ';':
@@ -26,9 +32,17 @@ class Lexer:
         elif self.stream.peek() == '#':
             return Token('POUND', self.stream.pop())
         elif self.stream.peek() == '<':
-            return Token('LESSTHAN', self.stream.pop())
+            self.stream.pop()
+            if self.stream.isEnd() or self.stream.peek() != '=':
+                return Token('LE', '<')
+            self.stream.pop()
+            return Token('LEQ', '<=')
         elif self.stream.peek() == '>':
-            return Token('GREATERTHAN', self.stream.pop())
+            self.stream.pop()
+            if self.stream.isEnd() or self.stream.peek() != '=':
+                return Token('GE', '>')
+            self.stream.pop()
+            return Token('GEQ', '>=')
         elif self.stream.peek() == '+':
             return Token('PLUS', self.stream.pop())
         elif self.stream.peek() == '-':
@@ -42,4 +56,4 @@ class Lexer:
         elif self.stream.peek() == ')':
             return Token('RIGHTPAREN', self.stream.pop())
         else:
-            raise Exception('Lexing Error: not a valid token')
+            raise Exception('Lexing Error: invalid token')
