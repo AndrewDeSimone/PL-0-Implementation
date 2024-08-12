@@ -55,5 +55,12 @@ class Lexer:
             return Token('LEFTPAREN', self.stream.pop())
         elif self.stream.peek() == ')':
             return Token('RIGHTPAREN', self.stream.pop())
+        elif self.stream.peek().isdigit():
+            number = self.stream.pop()
+            while not self.stream.isEnd() and self.stream.peek().isdigit():
+                number += self.stream.pop()
+            if not self.stream.isEnd() and not self.stream.peek() == ' ':
+                raise Exception('Lexing Error: invalid token')
+            return Token('NUMBER', int(number))
         else:
             raise Exception('Lexing Error: invalid token')
