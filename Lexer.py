@@ -59,16 +59,12 @@ class Lexer:
             number = self.stream.pop()
             while not self.stream.isEnd() and self.stream.peek().isdigit():
                 number += self.stream.pop()
-            if not self.stream.isEnd() and not self.stream.peek() == ' ':
-                raise Exception('Lexing Error: invalid token')
             return Token('NUMBER', int(number))
         elif self.stream.peek().isalpha():
             identifier = self.stream.pop()
             while not self.stream.isEnd() and self.stream.peek().isalpha():
                 identifier += self.stream.pop()
-            if not self.stream.isEnd() and not self.stream.peek() == ' ':
-                raise Exception('Lexing Error: invalid token')
-            if identifier in ['const', 'var', 'procedure', 'call', 'begin', 'end', 'if', 'then', 'while', 'do', 'odd']:
+            if identifier in ['CONST', 'VAR', 'PROCEDURE', 'CALL', 'BEGIN', 'END', 'IF', 'THEN', 'WHILE', 'DO', 'ODD']:
                 return Token(identifier, identifier)
             return Token('IDENTIFIER', identifier)
         else:
