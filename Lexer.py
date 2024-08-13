@@ -5,6 +5,12 @@ class Lexer:
 
     def __init__(self, fileName):
         self.stream = CharacterStream(fileName)
+        self.tokens = []
+        while not self.isEnd():
+            self.tokens.append(self.next())
+    
+    def getTokens(self):
+        return self.tokens
     
     def isEnd(self):
         self.stream.purgeSpaces()
