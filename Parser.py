@@ -63,7 +63,7 @@ def proc_decl(tokens, index):
     procedure_list = []
     while True:
         if tokens[index].type != 'PROCEDURE':
-            return proc_decl(procedure_list), index
+            return Proc_Decl(procedure_list), index
         index += 1
         if tokens[index].type == 'IDENTIFIER' and tokens[index+1].type == 'SEMICOLON':
             ident = Identifier(tokens[index])
@@ -78,7 +78,7 @@ def proc_decl(tokens, index):
 
 def statement(tokens, index):
     if tokens[index].type == 'IDENTIFIER':
-        if tokens[index+1].type == 'Assign':
+        if tokens[index+1].type == 'ASSIGN':
             ident = tokens[index]
             exp, index = expression(tokens, index+2)
             return Assignment(ident, exp), index
@@ -88,6 +88,10 @@ def statement(tokens, index):
         index += 1
         if tokens[index].type == 'IDENTIFIER':
             return Call(tokens[index]), index+1
+    if tokens[index].type == 'BANG':
+        index += 1
+        temp, index = expression(tokens, index)
+        return Write(temp), index
     if tokens[index].type == 'BEGIN':
         index +=1
         stmt_list = []
@@ -132,7 +136,7 @@ def condition(tokens, index):
     relation = tokens[index]
     index += 1
     right, index = expression(tokens, index)
-    return BinaryCondition(left, relation, right)
+    return BinaryCondition(left, relation, right), index
 
 def expression(tokens, index):
     op_list = []
@@ -142,7 +146,7 @@ def expression(tokens, index):
         term_list.append(temp)
     while True:
         if tokens[index].literal not in ['+', '-']:
-            return Expression(term_list, op_list)
+            return Expression(term_list, op_list), index
         op_list.append(tokens[index])
         index += 1
         temp, index = term(tokens, index)

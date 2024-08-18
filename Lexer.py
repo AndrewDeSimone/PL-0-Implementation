@@ -26,9 +26,6 @@ def scan(text):
         elif text[0] == ';':
             tokens.append(Token('SEMICOLON', ';'))
             text.pop(0)
-        elif text[0] == '?':
-            tokens.append(Token('QUESTION', '?'))
-            text.pop(0)
         elif text[0] == '!':
             tokens.append(Token('BANG', '!'))
             text.pop(0)

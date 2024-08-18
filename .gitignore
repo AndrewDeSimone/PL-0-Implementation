@@ -162,6 +162,7 @@ cython_debug/
 #testing files
 test.py
 test.pl0
+*.json
 
 #grammar description
 grammar.txt

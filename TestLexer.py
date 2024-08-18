@@ -18,8 +18,6 @@ class TestLexer(unittest.TestCase):
         self.assertEqual(scan(texttolist(',')), [Token('COMMA', ',')])
         #semicolon tests
         self.assertEqual(scan(texttolist(';')), [Token('SEMICOLON', ';')])
-        #question tests
-        self.assertEqual(scan(texttolist('?')), [Token('QUESTION', '?')])
         #bang tests
         self.assertEqual(scan(texttolist('!')), [Token('BANG', '!')])
         #POUND tests

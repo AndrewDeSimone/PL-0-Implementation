@@ -64,6 +64,13 @@ class Call:
     def accept(self, visitor):
         visitor.visit_call(self)
 
+class Write:
+    def __init__(self, expression):
+        self.expression = expression
+
+    def accept(self, visitor):
+        visitor.visit_write(self)
+
 class Executable:
     def __init__(self, statements):
         self.statements = statements
