@@ -1,77 +1,99 @@
-from CharacterStream import CharacterStream
 from Token import Token
 
-class Lexer:
-
-    def __init__(self, fileName):
-        self.stream = CharacterStream(fileName)
-        self.tokens = []
-        while not self.isEnd():
-            self.tokens.append(self.next())
-    
-    def getTokens(self):
-        return self.tokens
-    
-    def isEnd(self):
-        self.stream.purgeSpaces()
-        return self.stream.isEnd()
-
-    def next(self):
-        if self.stream.peek() == '.':
-            return Token('PERIOD', self.stream.pop())
-        elif self.stream.peek() == '=':
-            return Token('EQUALS', self.stream.pop())
-        elif self.stream.peek() == ':':
-            self.stream.pop()
-            if self.stream.isEnd() or self.stream.peek() != '=':
-                raise Exception('Lexing Error: invalid token')
-            self.stream.pop()
-            return Token('ASSIGN', ':=')
-        elif self.stream.peek() == ',':
-            return Token('COMMA', self.stream.pop())
-        elif self.stream.peek() == ';':
-            return Token('SEMICOLON', self.stream.pop())
-        elif self.stream.peek() == '?':
-            return Token('QUESTION', self.stream.pop())
-        elif self.stream.peek() == '!':
-            return Token('BANG', self.stream.pop())
-        elif self.stream.peek() == '#':
-            return Token('POUND', self.stream.pop())
-        elif self.stream.peek() == '<':
-            self.stream.pop()
-            if self.stream.isEnd() or self.stream.peek() != '=':
-                return Token('LE', '<')
-            self.stream.pop()
-            return Token('LEQ', '<=')
-        elif self.stream.peek() == '>':
-            self.stream.pop()
-            if self.stream.isEnd() or self.stream.peek() != '=':
-                return Token('GE', '>')
-            self.stream.pop()
-            return Token('GEQ', '>=')
-        elif self.stream.peek() == '+':
-            return Token('PLUS', self.stream.pop())
-        elif self.stream.peek() == '-':
-            return Token('MINUS', self.stream.pop())
-        elif self.stream.peek() == '*':
-            return Token('ASTERIK', self.stream.pop())
-        elif self.stream.peek() == '/':
-            return Token('SLASH', self.stream.pop())
-        elif self.stream.peek() == '(':
-            return Token('LEFTPAREN', self.stream.pop())
-        elif self.stream.peek() == ')':
-            return Token('RIGHTPAREN', self.stream.pop())
-        elif self.stream.peek().isdigit():
-            number = self.stream.pop()
-            while not self.stream.isEnd() and self.stream.peek().isdigit():
-                number += self.stream.pop()
-            return Token('NUMBER', int(number))
-        elif self.stream.peek().isalpha():
-            identifier = self.stream.pop()
-            while not self.stream.isEnd() and self.stream.peek().isalpha():
-                identifier += self.stream.pop()
-            if identifier in ['CONST', 'VAR', 'PROCEDURE', 'CALL', 'BEGIN', 'END', 'IF', 'THEN', 'WHILE', 'DO', 'ODD']:
-                return Token(identifier, identifier)
-            return Token('IDENTIFIER', identifier)
+#takes character list and returns tokens
+def scan(text):
+    tokens = []
+    text = purgespaces(text)
+    while len(text)>0:
+        if text[0] == '.':
+            tokens.append(Token('PERIOD', '.'))
+            text.pop(0)
+        elif text[0] == '=':
+            tokens.append(Token('EQUALS', '='))
+            text.pop(0)
+        elif text[0] == ':':
+            text.pop(0)
+            if len(text)==0:
+                raise Exception('INVALID TOKEN')
+            if text[0] =='=':
+                tokens.append(Token('ASSIGN', ':='))
+                text.pop(0)
+            else:
+                raise Exception('INVALID TOKEN')
+        elif text[0] == ',':
+            tokens.append(Token('COMMA', ','))
+            text.pop(0)
+        elif text[0] == ';':
+            tokens.append(Token('SEMICOLON', ';'))
+            text.pop(0)
+        elif text[0] == '?':
+            tokens.append(Token('QUESTION', '?'))
+            text.pop(0)
+        elif text[0] == '!':
+            tokens.append(Token('BANG', '!'))
+            text.pop(0)
+        elif text[0] == '#':
+            tokens.append(Token('POUND', '#'))
+            text.pop(0)
+        elif text[0] == '>':
+            text.pop(0)
+            if len(text) != 0 and text[0] == '=':
+                text.pop(0)
+                tokens.append(Token('GEQ', '>='))
+            else:
+                tokens.append(Token('GE', '>'))
+        elif text[0] == '<':
+            text.pop(0)
+            if len(text) != 0 and text[0] == '=':
+                text.pop(0)
+                tokens.append(Token('LEQ', '<='))
+            else:
+                tokens.append(Token('LE', '<'))
+        elif text[0] == '+':
+            tokens.append(Token('PLUS', '+'))
+            text.pop(0)
+        elif text[0] == '-':
+            tokens.append(Token('MINUS', '-'))
+            text.pop(0)
+        elif text[0] == '*':
+            tokens.append(Token('ASTERIK', '*'))
+            text.pop(0)
+        elif text[0] == '/':
+            tokens.append(Token('SLASH', '/'))
+            text.pop(0)
+        elif text[0] == '(':
+            tokens.append(Token('LEFTPAREN', '('))
+            text.pop(0)
+        elif text[0] == ')':
+            tokens.append(Token('RIGHTPAREN', ')'))
+            text.pop(0)
+        elif text[0].isdigit():
+            number = text[0]
+            text.pop(0)
+            while len(text)!=0 and text[0].isdigit():
+                number += text[0]
+                text.pop(0)
+            tokens.append(Token('NUMBER', int(number)))
+        elif text[0].isalpha():
+            word = text[0]
+            text.pop(0)
+            while len(text)!=0 and text[0].isalpha():
+                word += text[0]
+                text.pop(0)
+            if word in ['CONST', 'VAR', 'PROCEDURE', 'CALL', 'BEGIN', 'END', 'IF', 'THEN', 'WHILE', 'DO', 'ODD']:
+                tokens.append(Token(word, word))
+            else:
+                tokens.append(Token('IDENTIFIER', word))
         else:
-            raise Exception('Lexing Error: invalid token')
+            raise Exception('INVALID TOKEN')
+        text = purgespaces(text)
+    return tokens
+
+#removes spaces from beginning of text
+def purgespaces(text):
+    while len(text)>0:
+        if text[0] == ' ':
+            text.pop(0)
+        else:
+            return text
+    return text
