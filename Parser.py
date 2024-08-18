@@ -32,10 +32,10 @@ def const_decl(tokens, index):
             index += 3
         else:
             raise Exception('INVALID PROGRAM')
-        if tokens[index].type == ';':
+        if tokens[index].type == 'SEMICOLON':
             index += 1
             return Const_Decl(constant_list, index)
-        if tokens[index].type == ',':
+        if tokens[index].type == 'COMMA':
             index += 1
         else:
             raise Exception('INVALID PROGRAM')
@@ -47,14 +47,14 @@ def var_decl(tokens, index):
     var_list = []
     while True:
         if tokens[index].type == 'IDENTIFIER':
-            var_list(Identifier(tokens[index]))
+            var_list.append(Identifier(tokens[index]))
         else:
             raise Exception('INVALID PROGRAM')
         index+=1
-        if tokens[index].type == ';':
+        if tokens[index].type == 'SEMICOLON':
             index += 1
-            return Var_Decl(var_list, index)
-        if tokens[index].type == ',':
+            return Var_Decl(var_list), index
+        if tokens[index].type == 'COMMA':
             index += 1
         else:
             raise Exception('INVALID PROGRAM')
@@ -133,3 +133,42 @@ def condition(tokens, index):
     index += 1
     right, index = expression(tokens, index)
     return BinaryCondition(left, relation, right)
+
+def expression(tokens, index):
+    op_list = []
+    term_list = []
+    if tokens[index].literal not in ['+', '-']:
+        temp, index = term(tokens, index)
+        term_list.append(temp)
+    while True:
+        if tokens[index].literal not in ['+', '-']:
+            return Expression(term_list, op_list)
+        op_list.append(tokens[index])
+        index += 1
+        temp, index = term(tokens, index)
+        term_list.append(temp)
+
+def term(tokens, index):
+    op_list = []
+    fact_list = []
+    temp, index = factor(tokens, index)
+    fact_list.append(temp)
+    while True:
+        if tokens[index].literal not in ['*', '/']:
+            return Term(fact_list, op_list), index
+        op_list.append(tokens[index])
+        index += 1
+        temp, index = factor(tokens, index)
+        fact_list.append(temp)
+
+def factor(tokens, index):
+    if tokens[index].type == 'IDENTIFIER':
+        return Identifier(tokens[index]), index+1
+    if tokens[index].type == 'NUMBER':
+        return Number(tokens[index]), index+1
+    if tokens[index].type != 'LEFTPAREN':
+        raise Exception('INVALID PROGRAM')
+    temp, index = expression(tokens, index)
+    if tokens[index].type != 'RIGHTPAREN':
+        raise Exception('INVALID PROGRAM')
+    return temp, index+1
