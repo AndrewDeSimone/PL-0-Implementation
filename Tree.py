@@ -38,6 +38,10 @@ class Var_Decl:
         visitor.visit_var_decl(self)
 
 class Proc_Decl:
+    def __init__(self, procedures):
+        self.procedures = procedures
+
+class Procedure:
     def __init__(self, identifier, block):
         self.identifier = identifier
         self.block = block
