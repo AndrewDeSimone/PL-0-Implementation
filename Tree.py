@@ -49,13 +49,6 @@ class Procedure:
     def accept(self, visitor):
         visitor.visit_proc_decl(self)
 
-class Statement:
-    def __init__(self, statement):
-        self.statement = statement
-    
-    def accept(self, visitor):
-        visitor.visit_statement(self)
-
 class Assignment:
     def __init__(self, identifier, expression):
         self.identifier = identifier
